@@ -16,6 +16,11 @@
  * You should have received a copy of the GNU Lesser Public License
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+/*
+ * This file exports string representations of numbers that
+ * are forwarded from rtnetlink
+ */
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
