@@ -1,0 +1,10 @@
+# intermediate files
+*.o
+
+# output binaries
+enumif
+libenumif.a
+if_nameindex
+
+# CTAGS files
+/tags
