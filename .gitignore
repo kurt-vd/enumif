@@ -6,5 +6,8 @@ enumif
 libenumif.a
 if_nameindex
 
+# build configuration
+config.mk
+
 # CTAGS files
 /tags
