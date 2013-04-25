@@ -14,7 +14,7 @@ struct enumif {
 };
 
 /* allocate an array of enumif structures, with 1 extra with if_index=0 */
-extern struct enumif *enumif(void);
+extern struct enumif *enumif(int if_type, int if_flags, int if_state);
 
 /* string representations */
 extern const char *if_flagsstr(int if_flags);

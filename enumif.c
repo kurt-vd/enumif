@@ -8,7 +8,7 @@ int main(int argc, char *argv[])
 {
 	struct enumif *table, *iface;
 
-	table = enumif();
+	table = enumif(0, 0, 0);
 	if (!table)
 		return 1;
 	for (iface = table; iface->if_index; ++iface) {
