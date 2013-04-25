@@ -7,8 +7,16 @@
 int main(int argc, char *argv[])
 {
 	struct enumif *table, *iface;
+	int type = 0, flags = 0;
+	int j;
 
-	table = enumif(0, 0, 0);
+	if (argc >= 2)
+		type = if_strtype(argv[1]);
+
+	for (j = 2; j < argc; ++argc)
+		flags |= if_strflags(argv[j]);
+
+	table = enumif(type, flags, 0);
 	if (!table)
 		return 1;
 	for (iface = table; iface->if_index; ++iface) {
