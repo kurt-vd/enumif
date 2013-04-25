@@ -21,6 +21,11 @@ extern const char *if_flagsstr(int if_flags);
 extern const char *if_statestr(int if_state);
 extern const char *if_typestr(int if_type);
 
+/* string decoding */
+extern int if_strtype(const char *type);
+extern int if_strflags(const char *flags);
+extern int if_strstate(const char *state);
+
 /*
  * cleanup enumif resources.
  * This is called automatically on program shutdown.

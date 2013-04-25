@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 
 #include <sys/socket.h>
 #include <linux/if.h>
@@ -10,6 +12,33 @@ struct lookup {
 	int i;
 	const char *a;
 };
+
+static const char *lookup_i(int i, const struct lookup *table)
+{
+	for (; table->a; ++table) {
+		if (table->i == i)
+			return table->a;
+	}
+	return NULL;
+}
+
+static int lookup_a(const char *str, const struct lookup *table, int _default)
+{
+	const struct lookup *saved = NULL;
+
+	if (*str == '#')
+		return strtoul(str+1, 0, 0);
+
+	for (; table->a; ++table) {
+		if (!strncasecmp(table->a, str, strlen(str))) {
+			if (saved)
+				/* duplicate match */
+				return _default;
+			saved = table;
+		}
+	}
+	return saved ? saved->i : _default;
+}
 
 #define __PF(f,n) { ARPHRD_##f, #n },
 static const struct lookup iftypes[] = {
@@ -116,22 +145,23 @@ static const struct lookup ifflags[] = {
 	{},
 };
 
-static const char *statestrs[] = {
-	"UNKNOWN", "NOTPRESENT", "DOWN", "LOWERLAYERDOWN", 
-	"TESTING", "DORMANT",	 "UP"
+#define __ST(f) { IF_OPER_##f, #f, }
+static const struct lookup ifstates[] = {
+	__ST(UNKNOWN),
+	__ST(NOTPRESENT),
+	__ST(DOWN),
+	__ST(LOWERLAYERDOWN),
+	__ST(TESTING),
+	__ST(DORMANT),
+	__ST(UP),
+	{},
 };
 
 const char *if_typestr(int iftype)
 {
 	static char buf[16];
-	const struct lookup *lp; 
 
-	for (lp = iftypes; lp->a; ++lp) {
-		if (lp->i == iftype)
-			return lp->a;
-	}
-	sprintf(buf, "#%i", iftype);
-	return buf;
+	return lookup_i(iftype, iftypes) ?: (sprintf(buf, "#%i", iftype), buf);
 }
 
 const char *if_flagsstr(int if_flags)
@@ -160,8 +190,20 @@ const char *if_statestr(int ifstate)
 {
 	static char buf[16];
 
-	if ((ifstate >= 0)&&(ifstate < sizeof(statestrs)/sizeof(statestrs[0])))
-		return statestrs[ifstate];
-	sprintf(buf, "#%i", ifstate);
-	return buf;
+	return lookup_i(ifstate, ifstates) ?: (sprintf(buf, "#%i", ifstate), buf);
+}
+
+int if_strtype(const char *str)
+{
+	return lookup_a(str, iftypes, 0);
+}
+
+int if_strflags(const char *str)
+{
+	return lookup_a(str, ifflags, 0);
+}
+
+int if_strstate(const char *str)
+{
+	return lookup_a(str, ifstates, 0);
 }
