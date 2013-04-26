@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
 	if (argc >= 2)
 		type = if_strtype(argv[1]);
 
-	for (j = 2; j < argc; ++argc)
+	for (j = 2; j < argc; ++j)
 		flags |= if_strflags(argv[j]);
 
 	table = enumif();
