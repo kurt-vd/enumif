@@ -36,10 +36,16 @@ int main(int argc, char *argv[])
 	for (j = 2; j < argc; ++argc)
 		flags |= if_strflags(argv[j]);
 
-	table = enumif(type, flags, 0);
+	table = enumif();
 	if (!table)
 		return 1;
 	for (iface = table; iface->if_index; ++iface) {
+		/* test matching criteria */
+		if (type && (iface->if_type != type))
+			continue;
+		if (flags && (~iface->if_flags & flags))
+			continue;
+
 		printf("%i: %s\t{%s} <%s> %s\n", iface->if_index, iface->if_name,
 				if_typestr(iface->if_type),
 				if_flagsstr(iface->if_flags),

@@ -103,7 +103,7 @@ static void parse_rtattr(struct rtattr **tb, int max,
 	}
 }
 
-struct enumif *enumif(int if_type, int if_flags, int if_state)
+struct enumif *enumif(void)
 {
 	int ret, n_if = 0, curif_state;
 	size_t msglen;
@@ -175,14 +175,6 @@ struct enumif *enumif(int if_type, int if_flags, int if_state)
 			ifi = NLMSG_DATA(h);
 			parse_rtattr(tb, IFLA_MAX, IFLA_RTA(ifi), IFLA_PAYLOAD(h));
 			curif_state = *(unsigned char *)RTA_DATA(tb[IFLA_OPERSTATE]);
-
-			/* test matching criteria */
-			if (if_type && (ifi->ifi_type != if_type))
-				continue;
-			if (if_flags && (~ifi->ifi_flags & if_flags))
-				continue;
-			if (if_state && (curif_state != if_state))
-				continue;
 
 			/* store */
 			if (n_if >= tablesize) {
